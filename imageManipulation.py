@@ -6,7 +6,7 @@ import numpy as np
 from scipy.ndimage import geometric_transform
 
 #Variable declarations
-img = (plt.imread('profil.PNG')) # load an image
+img = (plt.imread('test.jpg')) # load an image
 x_center = round(img.shape[1]/2)
 y_center = round(img.shape[0]/2)
 
