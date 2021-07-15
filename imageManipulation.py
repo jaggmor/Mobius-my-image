@@ -54,7 +54,7 @@ c = np.linalg.det([[zp[0], wa[0], 1], [zp[1], wa[1], 1], [zp[2], wa[2], 1]])
 d = np.linalg.det([[zp[0]*wa[0], zp[0], 1],[zp[1]*wa[1], zp[1], 1],[zp[2]*wa[2], zp[2], 1]])
 
 
-transformed_img = geometric_transform(img, mobius_transf, order=5)
+transformed_img = geometric_transform(img, mobius_transf, order=3)
 plt.clf()
 plt.imshow(transformed_img)
 plt.show()

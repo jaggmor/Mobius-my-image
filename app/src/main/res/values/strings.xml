@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Mobius my image</string>
+    <string name="str_txt_camera">Take a photo</string>
+    <string name="str_txt_folder">Upload a photo</string>
 </resources>
