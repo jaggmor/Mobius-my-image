@@ -1,13 +1,23 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -22,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     // Declaring ImageButtons (!=Button)
     private ImageButton camera, folder;
 
+    //
+    ActivityResultLauncher<Intent> activityResultLauncherPhoto;
+    ActivityResultLauncher<String> mGetContent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,9 +44,33 @@ public class MainActivity extends AppCompatActivity {
         camera = findViewById(R.id.btn_camera);
         folder = findViewById(R.id.btn_folder);
 
+        activityResultLauncherPhoto = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null){
+                            Uri uri = result.getData().getData();
+
+
+                            //Bundle bundle = result.getData().getExtras();
+                            //Bitmap bitmap = (Bitmap) bundle.get("data");
+                        }
+                    }
+                });
+
+        mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
+                    @Override
+                    public void onActivityResult(Uri uri) {
+                        Toast.makeText(MainActivity.this, uri.getPath(), Toast.LENGTH_SHORT) .show();
+                    }
+                });
+
+
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (ContextCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
 
@@ -42,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+                    activityResultLauncherPhoto.launch(intent);
                 }
             }
         });
@@ -59,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(MainActivity.this,
                             "Permission already granted", Toast.LENGTH_SHORT).show();
+                    mGetContent.launch("image/*");
                 }
             }
         });
