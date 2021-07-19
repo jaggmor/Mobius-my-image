@@ -1,20 +1,17 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
-import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,19 +19,24 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity {
 
     // Defining my codes for camera
     private static final int MY_CAMERA_PERMISSION_CODE = 1;
     private static final int MY_FILE_PERMISSION_CODE = 2;
-    private static final int REQUEST_IMAGE_CAPTURE = 3;
+    public static final String URI_KEY = "com.ahlfregabnatsha.KEY";
 
     // Declaring ImageButtons (!=Button)
     private ImageButton camera, folder;
 
     //
-    ActivityResultLauncher<Intent> activityResultLauncherPhoto;
+    ActivityResultLauncher<Uri> activityResultLauncherPhoto;
     ActivityResultLauncher<String> mGetContent;
+
+    File photoFile;
+    Uri photoUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,18 +46,26 @@ public class MainActivity extends AppCompatActivity {
         camera = findViewById(R.id.btn_camera);
         folder = findViewById(R.id.btn_folder);
 
-        activityResultLauncherPhoto = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
+        File file = new File(getFilesDir(), "picFromCamera");
+        Uri uri = FileProvider.getUriForFile(this,
+                getApplicationContext().getPackageName() + ".provider", file);
+
+        //Requires pathing in the file provider
+        activityResultLauncherPhoto = registerForActivityResult(new ActivityResultContracts.TakePicture(),
+                new ActivityResultCallback<Boolean>() {
                     @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null){
-                            Uri uri = result.getData().getData();
-
-
-                            //Bundle bundle = result.getData().getExtras();
-                            //Bitmap bitmap = (Bitmap) bundle.get("data");
-                        }
+                    public void onActivityResult(Boolean result) {
+                        beginImageTransformation(uri);
+                        // do what you need with the uri here ...
                     }
+                    //public void onActivityResult(ActivityResult result) {
+                        //if (result.getResultCode() == RESULT_OK && result.getData() != null){
+                        //    //Toast.makeText(MainActivity.this, uri.getPath(), Toast.LENGTH_SHORT) .show();
+                        //    Bundle bundle = result.getData().getExtras();
+                        //    Bitmap bitmap = (Bitmap) bundle.get("data");
+
+                            //beginImageTransformation(uri);
+                        //}
                 });
 
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -63,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onActivityResult(Uri uri) {
                         Toast.makeText(MainActivity.this, uri.getPath(), Toast.LENGTH_SHORT) .show();
+                        beginImageTransformation(uri);
                     }
                 });
 
@@ -79,8 +90,9 @@ public class MainActivity extends AppCompatActivity {
                             new String[] { Manifest.permission.CAMERA }, MY_CAMERA_PERMISSION_CODE);
                 }
                 else {
-                    Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
-                    activityResultLauncherPhoto.launch(intent);
+                    //Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+
+                    activityResultLauncherPhoto.launch(uri);
                 }
             }
         });
@@ -96,8 +108,7 @@ public class MainActivity extends AppCompatActivity {
                             new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, MY_FILE_PERMISSION_CODE);
                 }
                 else {
-                    Toast.makeText(MainActivity.this,
-                            "Permission already granted", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
                     mGetContent.launch("image/*");
                 }
             }
@@ -119,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == MY_CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MainActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT) .show();
+                //Toast.makeText(MainActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT) .show();
             }
             else {
                 Toast.makeText(MainActivity.this, "Camera Permission Denied", Toast.LENGTH_SHORT) .show();
@@ -128,10 +139,18 @@ public class MainActivity extends AppCompatActivity {
         else if (requestCode == MY_FILE_PERMISSION_CODE) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MainActivity.this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(MainActivity.this, "Storage Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
+    private void beginImageTransformation(Uri uri) {
+        Intent intent = new Intent(this, ImageTransformationActivity.class);
+        intent.putExtra(URI_KEY, uri);
+        startActivity(intent);
+    }
+
+
 }
