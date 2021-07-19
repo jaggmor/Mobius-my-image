@@ -14,6 +14,7 @@ import java.io.IOException;
 public class ImageTransformationActivity extends AppCompatActivity {
 
     private ImageView imageView;
+    ComplexNumber z;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,10 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.photoImageView);
         imageView.setImageBitmap(bitmap);
+
+        //Test
+        z = new ComplexNumber(1, 2);
+        z.setImaginary(2);
 
     }
 }
