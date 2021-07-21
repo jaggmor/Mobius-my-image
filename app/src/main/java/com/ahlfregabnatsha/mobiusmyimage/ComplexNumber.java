@@ -1,9 +1,14 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
-public class ComplexNumber {
+import androidx.annotation.NonNull;
 
+/*
+ * Creates object representing a complex number with regular operations from mathematics.
+ */
+public class ComplexNumber {
     protected double real;
     protected double imaginary;
+
 
     public ComplexNumber(double x, double y) {
         this.real = x;
@@ -15,6 +20,10 @@ public class ComplexNumber {
         this.imaginary = y;
     }
 
+    @NonNull
+    public String toString() {
+        return this.real + " + i*" + this.imaginary;
+    }
 
     //Getters and setters.
     public double getReal() {
@@ -23,6 +32,18 @@ public class ComplexNumber {
 
     public double getImaginary() {
         return this.imaginary;
+    }
+
+    public double getModulus() {
+        return Math.sqrt(this.real*this.real + this.imaginary*this.imaginary);
+    }
+
+    public double getModulusSquared() {
+        return this.real*this.real + this.imaginary*this.imaginary;
+    }
+
+    public double getArgumentRadians() {
+        return Math.atan(this.imaginary/this.imaginary);
     }
 
     public void setReal(double x) {
@@ -34,37 +55,25 @@ public class ComplexNumber {
     }
 
     public static ComplexNumber add(ComplexNumber z1, ComplexNumber z2) {
-        return new ComplexNumber(z1.getReal()+z2.getReal(), z1.getImaginary()+z2.getImaginary());
+        return new ComplexNumber(z1.real+z2.real, z1.imaginary+z2.imaginary);
     }
 
     public static ComplexNumber multiplyByScalar(ComplexNumber z, double lambda) {
-        return new ComplexNumber(z.getReal()*lambda, z.getImaginary()*lambda);
+        return new ComplexNumber(z.real*lambda, z.imaginary*lambda);
     }
 
     public static ComplexNumber multiply(ComplexNumber z1, ComplexNumber z2) {
-        return new ComplexNumber(z1.getReal()*z2.getReal() - z1.getImaginary()*z2.getImaginary(),
-                z1.getReal()*z2.getImaginary() + z1.getImaginary()*z2.getReal());
+        return new ComplexNumber(z1.real*z2.real - z1.imaginary*z2.imaginary,
+                z1.real*z2.imaginary + z1.imaginary*z2.real);
     }
 
     public static ComplexNumber conjugate(ComplexNumber z) {
-        return new ComplexNumber(z.getReal(), -z.getImaginary());
-    }
-
-    public double getModulus() {
-        return Math.sqrt(this.getReal()*this.getReal() + this.getImaginary()*this.getImaginary());
-    }
-
-    public double getModulusSquared() {
-        return this.getReal()*this.getReal() + this.getImaginary()*this.getImaginary();
-    }
-
-    public double getArgumentRadians() {
-        return Math.atan(this.getImaginary()/this.getImaginary());
+        return new ComplexNumber(z.real, -z.imaginary);
     }
 
     public static ComplexNumber divide(ComplexNumber numerator, ComplexNumber denominator) {
         ComplexNumber z = multiply(numerator, conjugate(denominator));
-        return new ComplexNumber(z.getReal()/denominator.getModulusSquared(),
-                z.getImaginary()/denominator.getModulusSquared());
+        return new ComplexNumber(z.real/denominator.getModulusSquared(),
+                z.imaginary/denominator.getModulusSquared());
     }
 }
