@@ -13,11 +13,11 @@ y_center = round(img.shape[0]/2)
 
 
 def normal_to_center(coords):
-    return img.shape[0] - coords[0] - y_center,\
+    return  -coords[0] + y_center,\
            coords[1] - x_center, coords[2]
 
 def center_to_normal(coords):
-   return img.shape[0] - coords[0] - y_center,\
+   return -coords[0] + y_center,\
          x_center + coords[1], coords[2]
 
 def tup_to_cent_complex(tup):

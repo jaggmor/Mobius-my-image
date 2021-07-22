@@ -20,6 +20,7 @@ public class ComplexNumber {
         this.imaginary = y;
     }
 
+    @Override
     @NonNull
     public String toString() {
         return this.real + " + i*" + this.imaginary;
@@ -56,6 +57,10 @@ public class ComplexNumber {
 
     public static ComplexNumber add(ComplexNumber z1, ComplexNumber z2) {
         return new ComplexNumber(z1.real+z2.real, z1.imaginary+z2.imaginary);
+    }
+
+    public static ComplexNumber subtract(ComplexNumber z1, ComplexNumber z2) {
+        return new ComplexNumber(z1.real-z2.real, z1.imaginary-z2.imaginary);
     }
 
     public static ComplexNumber multiplyByScalar(ComplexNumber z, double lambda) {
