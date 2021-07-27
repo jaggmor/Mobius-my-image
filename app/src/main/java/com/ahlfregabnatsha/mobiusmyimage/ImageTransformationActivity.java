@@ -1,15 +1,21 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,10 +28,24 @@ public class ImageTransformationActivity extends AppCompatActivity {
     private Button btn_transform;
     public Bitmap bitmap;
 
+    Dialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_transformation);
+
+        Toolbar myChildToolbar =
+                (Toolbar) findViewById(R.id.my_child_toolbar);
+        setSupportActionBar(myChildToolbar);
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        //Info dialog
+        dialog = new Dialog(this);
 
         Intent intent = getIntent();
         Uri imageUri = intent.getParcelableExtra(MainActivity.URI_KEY);
@@ -120,6 +140,42 @@ public class ImageTransformationActivity extends AppCompatActivity {
     //A bit redundant with this method. We'll see...
     public static int getScreenWidth() {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.action_bar, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_showInfo:
+                // User chose the "Settings" item, show the app settings UI...
+                openInfoDialog();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void openInfoDialog() {
+        dialog.setContentView(R.layout.dialog_info_layout);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Button btn_ok = dialog.findViewById(R.id.button_dialog);
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
 }

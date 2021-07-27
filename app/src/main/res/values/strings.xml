@@ -3,4 +3,8 @@
     <string name="str_txt_camera">Take a photo</string>
     <string name="str_txt_folder">Upload a photo</string>
     <string name="str_showInfo">Show info</string>
+    <string name="str_instruction_text">1. Upload or take a photo.\n2. Press transform and click the image six times.\n3. Save the transformed image to your gallery.</string>
+    <string name="str_instruction_title">How to use?</string>
+    <string name="str_about_title">About</string>
+    <string name="str_about_text">This application was created by Gabriel Shafiq Ahlgren using tools from complex analysis.\n\nPlease get in touch with me on\ngabriel.shaahl@gmail.com\nif you have any feedback or suggestions.</string>
 </resources>

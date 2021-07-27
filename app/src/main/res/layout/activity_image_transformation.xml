@@ -4,8 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ImageTransformationActivity"
-    android:background="@color/black">
+    android:background="@color/black"
+    tools:context=".ImageTransformationActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_child_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/action_bar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <ImageView
         android:id="@+id/photoImageView"
@@ -14,18 +25,18 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_transform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_child_toolbar"
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
         android:id="@+id/btn_transform"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="Transform"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
