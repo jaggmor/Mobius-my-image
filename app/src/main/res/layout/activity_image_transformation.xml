@@ -22,12 +22,13 @@
         android:id="@+id/photoImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/btn_transform"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_child_toolbar"
         tools:srcCompat="@tools:sample/avatars" />
 
+    <!-- This button was used for debugging purposes
     <Button
         android:id="@+id/btn_transform"
         android:layout_width="wrap_content"
@@ -38,5 +39,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+        -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
