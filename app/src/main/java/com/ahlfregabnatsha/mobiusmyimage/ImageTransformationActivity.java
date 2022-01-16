@@ -28,7 +28,6 @@ import java.io.IOException;
 public class ImageTransformationActivity extends AppCompatActivity {
 
     private ImageView imageView;
-    //private Button btn_transform;
     public Bitmap bitmap;
     public int bitmapWidth;
     public int bitmapHeight;
@@ -44,7 +43,8 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
     private ComplexNumber[] complexNumberPoints = new ComplexNumber[6];
 
-    int points_picked = 0;
+    private int points_picked = 0;
+    private MenuItem saveMenuItem;
 
     Dialog dialog;
 
@@ -116,6 +116,8 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
                     bitmap = transformBitmap(bitmap, mt);
                     imageView.setImageBitmap(bitmap);
+
+                    saveMenuItem.setVisible(true);
                     points_picked++;
                     return false;
                 }
@@ -125,71 +127,7 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
             }
         });
-        
-        
 
-        //btn_transform = findViewById(R.id.btn_transform);
-        
-         /*
-        btn_transform.setOnClickListener(new View.OnClickListener() {
-            //When user clicks TRANSFORM
-
-            @Override
-            public void onClick(View v) {
-                //Implement onTouch listener here.
-                z1 = new ComplexNumber(-100, 0);
-                w1 = new ComplexNumber(0, 100);
-
-                z2 = new ComplexNumber(0, 100);
-                w2 = new ComplexNumber(120, 0);
-
-                z3 = new ComplexNumber(100, 0);
-                w3 = new ComplexNumber(0, -100);
-
-
-                //Transformation that will take us between bitmaps.
-                MobiusTransformation mt = new MobiusTransformation(z1, z2, z3, w1, w2, w3);
-
-                bitmap = transformBitmap(bitmap, mt);
-                imageView.setImageBitmap(bitmap);
-
-                //test rotation and zoom transformation
-                
-                imageView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        int action = event.getAction();
-                        if (action == MotionEvent.ACTION_DOWN && points_picked < 6){
-                            complexNumberPoints[points_picked] = new ComplexNumber(
-                                    x_center((int) event.getX()), y_center((int) event.getY()));
-                            Toast.makeText(ImageTransformationActivity.this,
-                                    complexNumberPoints[points_picked].toString(), Toast.LENGTH_SHORT) .show();
-                            points_picked++;
-                            return true;
-                        }
-                        else if (points_picked == 6){
-                            z1 = complexNumberPoints[0];
-                            w1 = complexNumberPoints[1];
-                            z2 = complexNumberPoints[2];
-                            w2 = complexNumberPoints[3];
-                            z3 = complexNumberPoints[4];
-                            w3 = complexNumberPoints[5];
-                            MobiusTransformation mt = new MobiusTransformation(z1, z2, z3, w1, w2, w3);
-
-                            bitmap = transformBitmap(bitmap, mt);
-                            imageView.setImageBitmap(bitmap);
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-
-                    }
-                });
-
-            }
-        });
-        */
     }
 
     //Returns the transformed bitmap.
@@ -270,6 +208,9 @@ public class ImageTransformationActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.action_bar, menu);
+        // Hide the save action
+        saveMenuItem = menu.findItem(R.id.action_saveImage);
+        saveMenuItem.setVisible(false);
         return true;
     }
 
