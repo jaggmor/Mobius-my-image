@@ -5,8 +5,14 @@ A möbius transformation is uniquely determined by a mapping of three points of 
 
 Images of the UI of the app can be found below:
 
-<img src="Screenshot_20220219_012231_com.ahlfregabnatsha.mobiusmyimage.jpg"></img>
-<img src="Screenshot_20220219_013340_com.ahlfregabnatsha.mobiusmyimage.jpg"></img>
+<img src="Screenshot_20220219_012231_com.ahlfregabnatsha.mobiusmyimage.jpg"
+     width="400" 
+     height="auto"
+     ></img>
+<img src="Screenshot_20220219_013340_com.ahlfregabnatsha.mobiusmyimage.jpg"
+     width="400" 
+     height="auto"
+     ></img>
 
 
 ## To do list
