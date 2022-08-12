@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_saveImage"
+        android:title="@string/str_saveImage"
+        android:icon="@drawable/ic_save_24"
+        app:showAsAction="always"
+        />
+
+    <item
         android:id="@+id/action_showInfo"
         android:title="@string/str_showInfo"
         android:icon="@drawable/ic_info_24"

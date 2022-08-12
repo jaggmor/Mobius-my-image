@@ -43,10 +43,8 @@ public class MainActivity extends AppCompatActivity {
     ActivityResultLauncher<Uri> activityResultLauncherPhoto;
     ActivityResultLauncher<String> mGetContent;
 
-    File photoFile;
-    Uri photoUri;
-
-    Dialog dialog;
+    //dialogInfo is the information displayed when pressing the info button in the toolbar.
+    Dialog dialogInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        dialog = new Dialog(this);
+        dialogInfo = new Dialog(this);
 
         camera = findViewById(R.id.btn_camera);
         folder = findViewById(R.id.btn_folder);
@@ -71,16 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onActivityResult(Boolean result) {
                         beginImageTransformation(uri);
-                        // do what you need with the uri here ...
                     }
-                    //public void onActivityResult(ActivityResult result) {
-                        //if (result.getResultCode() == RESULT_OK && result.getData() != null){
-                        //    //Toast.makeText(MainActivity.this, uri.getPath(), Toast.LENGTH_SHORT) .show();
-                        //    Bundle bundle = result.getData().getExtras();
-                        //    Bitmap bitmap = (Bitmap) bundle.get("data");
-
-                            //beginImageTransformation(uri);
-                        //}
                 });
 
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -91,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
                         beginImageTransformation(uri);
                     }
                 });
-
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                             new String[] { Manifest.permission.CAMERA }, MY_CAMERA_PERMISSION_CODE);
                 }
                 else {
-                    //Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+                    //Permission already granted
 
                     activityResultLauncherPhoto.launch(uri);
                 }
@@ -123,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                             new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, MY_FILE_PERMISSION_CODE);
                 }
                 else {
-                    //Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+                    //Permission already granted
                     mGetContent.launch("image/*");
                 }
             }
@@ -171,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.action_bar, menu);
+        // Hide the save action
+        MenuItem saveMenuItem = menu.findItem(R.id.action_saveImage);
+        saveMenuItem.setVisible(false);
         return true;
     }
 
@@ -189,17 +180,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openInfoDialog() {
-        dialog.setContentView(R.layout.dialog_info_layout);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogInfo.setContentView(R.layout.dialog_info_layout);
+        dialogInfo.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        Button btn_ok = dialog.findViewById(R.id.button_dialog);
+        Button btn_ok = dialogInfo.findViewById(R.id.button_dialog);
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                dialogInfo.dismiss();
             }
         });
-        dialog.show();
+        dialogInfo.show();
     }
 
 

@@ -2,9 +2,8 @@ package com.ahlfregabnatsha.mobiusmyimage;
 
 import androidx.annotation.NonNull;
 
-/*
- * Creates object representing a complex number with regular operations from mathematics.
- */
+//Creates object representing a complex number with regular operations from mathematics.
+
 public class ComplexNumber {
     protected double real;
     protected double imaginary;
