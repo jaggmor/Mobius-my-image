@@ -1,8 +1,14 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
+//
+//Creates object representing a complex
+// number with regular operations from mathematics.
+//
+
+// Todo Rename functions for mor readable code
+// I.e. z.Re() and static ComplexNumber.Re(z)
 import androidx.annotation.NonNull;
 
-//Creates object representing a complex number with regular operations from mathematics.
 
 public class ComplexNumber {
     protected double real;

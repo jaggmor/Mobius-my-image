@@ -2,6 +2,9 @@ package com.ahlfregabnatsha.mobiusmyimage;
 
 import androidx.annotation.NonNull;
 
+// Todo Make a separate Determinant class to use here.
+
+
 public class MobiusTransformation {
 
     //Mobius transformation coefficients.
