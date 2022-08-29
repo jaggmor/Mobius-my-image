@@ -43,7 +43,7 @@ public class ComplexNumber {
     }
 
     public double getArgumentRadians() {
-        return Math.atan(this.imaginary/this.imaginary);
+        return Math.atan(this.imaginary/this.real);
     }
 
     public void setReal(double x) {
