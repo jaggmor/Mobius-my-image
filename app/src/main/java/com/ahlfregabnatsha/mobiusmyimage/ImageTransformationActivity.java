@@ -1,6 +1,5 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -41,9 +40,9 @@ public class ImageTransformationActivity extends AppCompatActivity {
     private ComplexNumber z3;
     private ComplexNumber w3;
 
-    private ComplexNumber[] complexNumberPoints = new ComplexNumber[6];
-
     private int points_picked = 0;
+
+    private final ComplexNumber[] complexNumberPoints = new ComplexNumber[6];
     private MenuItem saveMenuItem;
 
     Dialog dialog;
@@ -55,13 +54,8 @@ public class ImageTransformationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_transformation);
 
         Toolbar myChildToolbar =
-                (Toolbar) findViewById(R.id.my_child_toolbar);
+                findViewById(R.id.my_child_toolbar);
         setSupportActionBar(myChildToolbar);
-        // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
-
-        // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
 
         //Info dialog
         dialog = new Dialog(this);
@@ -76,56 +70,54 @@ public class ImageTransformationActivity extends AppCompatActivity {
         }
         if (bitmap != null) {
             bitmap = resizeToScreenWidth(bitmap);
+            this.bitmapWidth = bitmap.getWidth();
+            this.bitmapHeight = bitmap.getHeight();
+        }
+        else {
+            Toast.makeText(this, "Something wrong occurred while loading the image", Toast.LENGTH_SHORT).show();
         }
 
-        this.bitmapWidth = bitmap.getWidth();
-        this.bitmapHeight = bitmap.getHeight();
-
+        // Debugging purposes
         Toast.makeText(ImageTransformationActivity.this,
                 Integer.toString(bitmapWidth), Toast.LENGTH_SHORT).show();
         Toast.makeText(ImageTransformationActivity.this,
                 Integer.toString(bitmapHeight), Toast.LENGTH_SHORT).show();
 
-
         imageView = findViewById(R.id.photoImageView);
         imageView.setImageBitmap(bitmap);
-        
-        
-        imageView.setOnTouchListener(new View.OnTouchListener() {
 
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                if (action == MotionEvent.ACTION_DOWN && points_picked < 6){
-                    complexNumberPoints[points_picked] = new ComplexNumber(
-                            x_center((int) event.getX()), y_center((int) event.getY()));
-                    Toast.makeText(ImageTransformationActivity.this,
-                            complexNumberPoints[points_picked].toString(), Toast.LENGTH_SHORT) .show();
-                    points_picked++;
-                    return true;
-                }
-                else if (points_picked == 6){
-                    z1 = complexNumberPoints[0];
-                    w1 = complexNumberPoints[1];
-                    z2 = complexNumberPoints[2];
-                    w2 = complexNumberPoints[3];
-                    z3 = complexNumberPoints[4];
-                    w3 = complexNumberPoints[5];
-                    MobiusTransformation mt = new MobiusTransformation(z1, z2, z3, w1, w2, w3);
-
-                    bitmap = transformBitmap(bitmap, mt);
-                    imageView.setImageBitmap(bitmap);
-
-                    saveMenuItem.setVisible(true);
-                    points_picked++;
-                    return false;
-                }
-                else {
-                    return false;
-                }
-
+        imageView.setOnTouchListener((v, event) -> {
+            int action = event.getAction();
+            if (action == MotionEvent.ACTION_DOWN && points_picked < 6){
+                complexNumberPoints[points_picked] = new ComplexNumber(
+                        x_center((int) event.getX()),
+                        y_center((int) event.getY())
+                );
+                Toast.makeText(ImageTransformationActivity.this,
+                        complexNumberPoints[points_picked].toString(), Toast.LENGTH_SHORT) .show();
+                points_picked++;
+                return true;
             }
+            else if (points_picked == 6){
+                z1 = complexNumberPoints[0];
+                w1 = complexNumberPoints[1];
+                z2 = complexNumberPoints[2];
+                w2 = complexNumberPoints[3];
+                z3 = complexNumberPoints[4];
+                w3 = complexNumberPoints[5];
+                MobiusTransformation mt = new MobiusTransformation(z1, z2, z3, w1, w2, w3);
+
+                bitmap = transformBitmap(bitmap, mt);
+                imageView.setImageBitmap(bitmap);
+
+                saveMenuItem.setVisible(true);
+                points_picked++;
+                return false;
+            }
+            else {
+                return false;
+            }
+
         });
 
     }
@@ -214,11 +206,11 @@ public class ImageTransformationActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item, Dialog dialog) {
         switch (item.getItemId()) {
             case R.id.action_showInfo:
                 // User chose the "Settings" item, show the app settings UI...
-                openInfoDialog();
+                openInfoDialog(dialog);
                 return true;
 
             default:
@@ -229,17 +221,12 @@ public class ImageTransformationActivity extends AppCompatActivity {
         }
     }
 
-    private void openInfoDialog() {
+    private void openInfoDialog(Dialog dialog) {
         dialog.setContentView(R.layout.dialog_info_layout);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         Button btn_ok = dialog.findViewById(R.id.button_dialog);
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        btn_ok.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 }

@@ -13,7 +13,7 @@
         android:id="@+id/action_showInfo"
         android:title="@string/str_showInfo"
         android:icon="@drawable/ic_info_24"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         />
 
 </menu>
