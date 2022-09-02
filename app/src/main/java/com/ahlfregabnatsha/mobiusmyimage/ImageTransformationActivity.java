@@ -17,7 +17,7 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
+
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -28,24 +28,9 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
     private ImageView imageView;
     public Bitmap bitmap;
-    public int bitmapWidth;
-    public int bitmapHeight;
-
-    private ComplexNumber z1;
-    private ComplexNumber w1;
-
-    private ComplexNumber z2;
-    private ComplexNumber w2;
-
-    private ComplexNumber z3;
-    private ComplexNumber w3;
-
-    private int points_picked = 0;
-
-    private final ComplexNumber[] complexNumberPoints = new ComplexNumber[6];
     private MenuItem saveMenuItem;
-
     Dialog dialog;
+    ClickSlave clickSlave;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -68,109 +53,42 @@ public class ImageTransformationActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         if (bitmap != null) {
             bitmap = resizeToScreenWidth(bitmap);
-            this.bitmapWidth = bitmap.getWidth();
-            this.bitmapHeight = bitmap.getHeight();
         }
         else {
             Toast.makeText(this, "Something wrong occurred while loading the image", Toast.LENGTH_SHORT).show();
         }
 
-        // Debugging purposes
-        Toast.makeText(ImageTransformationActivity.this,
-                Integer.toString(bitmapWidth), Toast.LENGTH_SHORT).show();
-        Toast.makeText(ImageTransformationActivity.this,
-                Integer.toString(bitmapHeight), Toast.LENGTH_SHORT).show();
-
+        clickSlave = new ClickSlave(bitmap);
         imageView = findViewById(R.id.photoImageView);
         imageView.setImageBitmap(bitmap);
 
         imageView.setOnTouchListener((v, event) -> {
             int action = event.getAction();
-            if (action == MotionEvent.ACTION_DOWN && points_picked < 6){
-                complexNumberPoints[points_picked] = new ComplexNumber(
-                        x_center((int) event.getX()),
-                        y_center((int) event.getY())
+            if (action == MotionEvent.ACTION_DOWN
+                    && !clickSlave.allPointsChosen()) {
+                imageView.setImageBitmap(
+                            clickSlave.addPoint(
+                                    new ComplexNumber(
+                                    clickSlave.x_center((int) event.getX()),
+                                    clickSlave.y_center((int) event.getY())
+                                    )
+                            )
                 );
-                Toast.makeText(ImageTransformationActivity.this,
-                        complexNumberPoints[points_picked].toString(), Toast.LENGTH_SHORT) .show();
-                points_picked++;
                 return true;
             }
-            else if (points_picked == 6){
-                z1 = complexNumberPoints[0];
-                w1 = complexNumberPoints[1];
-                z2 = complexNumberPoints[2];
-                w2 = complexNumberPoints[3];
-                z3 = complexNumberPoints[4];
-                w3 = complexNumberPoints[5];
-                MobiusTransformation mt = new MobiusTransformation(z1, z2, z3, w1, w2, w3);
-
-                bitmap = transformBitmap(bitmap, mt);
-                imageView.setImageBitmap(bitmap);
-
+            else if (clickSlave.allPointsChosen() && !clickSlave.done){
+                imageView.setImageBitmap(clickSlave.transform());
                 saveMenuItem.setVisible(true);
-                points_picked++;
                 return false;
             }
             else {
                 return false;
             }
-
         });
-
     }
-
-    //Returns the transformed bitmap.
-    private Bitmap transformBitmap(Bitmap bitmap, MobiusTransformation mt) {
-        Bitmap transformedBitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
-
-        ComplexNumber imageCoordinates, domainCoordinates;
-        for (int x = 0; x < bitmapWidth; x++) {
-            for (int y = 0; y < bitmapHeight; y++) {
-                //Adjust to coordinates with origin in center of picture.
-                //imageCoordinates = new ComplexNumber(x - bitmapWidth / 2, bitmapHeight / 2 - y);
-                imageCoordinates = new ComplexNumber(x_center(x), y_center(y));
-                domainCoordinates = mt.transformInverse(imageCoordinates);
-                if (Math.round(domainCoordinates.getReal()) < bitmapWidth/2 && Math.round(domainCoordinates.getReal()) > -bitmapWidth/2 &&
-                        Math.round(domainCoordinates.getImaginary()) < bitmapHeight / 2 && Math.round(domainCoordinates.getImaginary()) > -bitmapHeight/2) {
-
-                    //interpolation method, nearest neighbor.
-                    //int xx = (int) Math.round(domainCoordinates.getReal()) + bitmapWidth / 2;
-                    //int yy = -(int) Math.round(domainCoordinates.getImaginary()) + bitmapHeight / 2;
-                    int xx = x_normal((int) Math.round(domainCoordinates.getReal()));
-                    int yy = y_normal((int) Math.round(domainCoordinates.getImaginary()));
-                    int newPixel = bitmap.getPixel(xx, yy);
-
-                    transformedBitmap.setPixel(x, y, newPixel);
-                } else {
-                    transformedBitmap.setPixel(x, y, Color.BLACK);
-                }
-            }
-        }
-
-        bitmap.recycle();   //Save memory
-        return transformedBitmap;
-    }
-
-    private int x_center(int x) {
-        return x - (bitmapWidth/2);
-    }
-
-    private int y_center(int y) {
-        return (bitmapHeight/2) - y;
-    }
-
-    private int x_normal(int x_c) {
-        return x_c + (bitmapWidth/2);
-    }
-
-    private int y_normal(int y_c) {
-        return (bitmapHeight/2) - y_c;
-    }
-
-
 
     //https://stackoverflow.com/questions/4837715/how-to-resize-a-bitmap-in-android
     //Rescale to functional size for transformation.
