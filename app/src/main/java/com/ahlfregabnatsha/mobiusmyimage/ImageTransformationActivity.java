@@ -66,27 +66,50 @@ public class ImageTransformationActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
 
         imageView.setOnTouchListener((v, event) -> {
+            if (clickSlave.done) {
+                return false;
+            }
+
             int action = event.getAction();
-            if (action == MotionEvent.ACTION_DOWN
-                    && !clickSlave.allPointsChosen()) {
-                imageView.setImageBitmap(
-                            clickSlave.addPoint(
-                                    new ComplexNumber(
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    clickSlave.addPoint( new ComplexNumber(
+                                    clickSlave.x_center((int) event.getX()),
+                                    clickSlave.y_center((int) event.getY()) )
+                    );
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    imageView.setImageBitmap(clickSlave.drawTempLine(
+                            clickSlave.points[clickSlave.points_picked-1],
+                            new ComplexNumber(
                                     clickSlave.x_center((int) event.getX()),
                                     clickSlave.y_center((int) event.getY())
-                                    )
-                            )
-                );
-                return true;
+                            ),
+                            Color.BLACK)
+                    );
+                    break;
+                case MotionEvent.ACTION_UP:
+                    clickSlave.addPoint( new ComplexNumber(
+                            clickSlave.x_center((int) event.getX()),
+                            clickSlave.y_center((int) event.getY()) )
+                    );
+
+                    imageView.setImageBitmap(clickSlave.drawPermLine(
+                            clickSlave.points[clickSlave.points_picked-2],
+                            clickSlave.points[clickSlave.points_picked-1],
+                            Color.BLACK)
+                    );
+
+                    if (clickSlave.allPointsChosen()) {
+                        imageView.setImageBitmap(clickSlave.transform());
+                        saveMenuItem.setVisible(true);
+                    }
+                    break;
+                default:
+                    // Do nothing.
+                    return true;
             }
-            else if (clickSlave.allPointsChosen() && !clickSlave.done){
-                imageView.setImageBitmap(clickSlave.transform());
-                saveMenuItem.setVisible(true);
-                return false;
-            }
-            else {
-                return false;
-            }
+            return true;
         });
     }
 

@@ -16,8 +16,8 @@ public class ClickSlave {
     int bitmapHeight;
 
     public boolean done = false;
-    private int points_picked = 0;
-    private final ComplexNumber[] points = new ComplexNumber[6];
+    public int points_picked = 0;
+    public ComplexNumber[] points = new ComplexNumber[6];
 
     public ClickSlave(Bitmap bitmap) {
         // When object is created we save the old bitmap.
@@ -29,6 +29,14 @@ public class ClickSlave {
         this.bitmapHeight = bitmap.getHeight();
     }
 
+    public Bitmap drawPermLine(ComplexNumber z1, ComplexNumber z2, int color) {
+        return drawLine(this.copy, z1, z2, color);
+    }
+
+    public Bitmap drawTempLine(ComplexNumber z1, ComplexNumber z2, int color) {
+        Bitmap bitmap_tmp = this.copy.copy(this.copy.getConfig(), true);
+        return drawLine(bitmap_tmp, z1, z2, color);
+    }
 
     private Bitmap drawLine(Bitmap bitmap, ComplexNumber z1, ComplexNumber z2, int color) {
         Paint paint = new Paint();
@@ -59,19 +67,9 @@ public class ClickSlave {
         return transformBitmap(this.original, mt);
     }
 
-    int[] colors = {Color.RED, Color.BLUE, Color.GREEN};
-    public Bitmap addPoint(ComplexNumber z) {
+    public void addPoint(ComplexNumber z) {
         points[points_picked] = z;
         this.points_picked++;
-        if (this.points_picked % 2 == 0) {
-            return drawLine(this.copy,
-                    points[points_picked-2],
-                    points[points_picked-1],
-                    colors[points_picked/2 - 1]);  // I.e. the first point 2/2-1 = 0 -> first color
-        }
-        else {
-            return this.copy;
-        }
     }
 
     public boolean allPointsChosen() {
