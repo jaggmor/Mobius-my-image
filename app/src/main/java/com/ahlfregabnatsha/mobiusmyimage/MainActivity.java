@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     // Defining my codes for camera
     private static final int MY_CAMERA_PERMISSION_CODE = 1;
     private static final int MY_FILE_PERMISSION_CODE = 2;
+
     public static final String URI_KEY = "com.ahlfregabnatsha.KEY";
 
     // Declaring ImageButtons (!=Button)
@@ -100,15 +101,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         folder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 
                     // Requesting the permission
                     ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, MY_FILE_PERMISSION_CODE);
+                            new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, MY_FILE_PERMISSION_CODE);
                 }
                 else {
                     //Permission already granted

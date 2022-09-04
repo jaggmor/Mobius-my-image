@@ -3,16 +3,23 @@ package com.ahlfregabnatsha.mobiusmyimage;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -24,8 +31,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Objects;
+import java.util.UUID;
 
 public class ImageTransformationActivity extends AppCompatActivity {
+
+    private static final int MY_WRITE_PERMISSION_CODE = 1;
 
     private ImageView imageView;
     public Bitmap bitmap;
@@ -121,7 +133,7 @@ public class ImageTransformationActivity extends AppCompatActivity {
                     );
 
                     if (clickSlave.allPointsChosen()) {
-                        imageView.setImageBitmap(clickSlave.transform());
+                        imageView.setImageBitmap(this.bitmap = clickSlave.transform());
                         saveMenuItem.setVisible(true);
                     }
                     break;
@@ -171,8 +183,28 @@ public class ImageTransformationActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_showInfo:
                 // User chose the "Settings" item, show the app settings UI...
-                Toast.makeText(this, "Clicked info button", Toast.LENGTH_SHORT).show();
                 openInfoDialog(dialog);
+                return true;
+            case R.id.action_saveImage:
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+                        ContextCompat.checkSelfPermission(ImageTransformationActivity.this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+
+                    // Requesting the permission
+                    ActivityCompat.requestPermissions(ImageTransformationActivity.this,
+                            new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                            MY_WRITE_PERMISSION_CODE);
+                }
+
+                //error here!
+                else if (savePhotoToExternalStorage(UUID.randomUUID().toString(), this.bitmap)){
+                    //Permission already granted and we just saved
+                    Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
+                }
+
+                else {
+                    Toast.makeText(this, "Permission not granted", Toast.LENGTH_SHORT).show();
+                }
                 return true;
 
             default:
@@ -190,5 +222,38 @@ public class ImageTransformationActivity extends AppCompatActivity {
         Button btn_ok = dialog.findViewById(R.id.button_dialog);
         btn_ok.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
+    }
+
+    //Saving bitmap
+    private boolean savePhotoToExternalStorage(String displayName, Bitmap bitmap) {
+        Uri imageCollection = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        }
+        else {
+            imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
+
+        ContentResolver resolver = getContentResolver();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, displayName + ".jpg");
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        contentValues.put(MediaStore.Images.Media.WIDTH, bitmap.getWidth());
+        contentValues.put(MediaStore.Images.Media.HEIGHT, bitmap.getHeight());
+
+        try {
+            //assert non null maybe
+            Uri imageUri = resolver.insert(imageCollection, contentValues);
+            OutputStream outputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            Objects.requireNonNull(outputStream);
+            return true;
+        }
+        catch (IOException e) {
+            Toast.makeText(this, "Image save failed" + e, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return false;
     }
 }
