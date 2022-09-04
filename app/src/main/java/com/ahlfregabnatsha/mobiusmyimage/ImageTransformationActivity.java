@@ -70,34 +70,46 @@ public class ImageTransformationActivity extends AppCompatActivity {
                 return false;
             }
 
+            boolean outside = (event.getX() < 0 || event.getX() > bitmap.getWidth()
+                    || event.getY() < 0 ||event.getY() > bitmap.getHeight());
+
             int action = event.getAction();
+            ComplexNumber z_new;
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    clickSlave.addPoint( new ComplexNumber(
-                                    clickSlave.x_center((int) event.getX()),
-                                    clickSlave.y_center((int) event.getY()) )
-                    );
+                    z_new = new ComplexNumber(
+                            clickSlave.x_center((int) event.getX()),
+                            clickSlave.y_center((int) event.getY()) );
+
+                    clickSlave.addPoint(z_new);
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    if (outside) {
+                        return false;
+                    }
+                    z_new = new ComplexNumber(
+                            clickSlave.x_center((int) event.getX()),
+                            clickSlave.y_center((int) event.getY()) );
                     imageView.setImageBitmap(clickSlave.drawTempLine(
-                            clickSlave.points[clickSlave.points_picked-1],
-                            new ComplexNumber(
-                                    clickSlave.x_center((int) event.getX()),
-                                    clickSlave.y_center((int) event.getY())
-                            ),
-                            Color.BLACK)
+                            clickSlave.points[clickSlave.points_picked-1], z_new
+                            )
                     );
                     break;
                 case MotionEvent.ACTION_UP:
-                    clickSlave.addPoint( new ComplexNumber(
-                            clickSlave.x_center((int) event.getX()),
-                            clickSlave.y_center((int) event.getY()) )
-                    );
+                    if (outside) {
+                        z_new = clickSlave.z_new;
+                    }
+                    else {
+                        z_new = new ComplexNumber(
+                                clickSlave.x_center((int) event.getX()),
+                                clickSlave.y_center((int) event.getY()));
+                    }
+
+                    clickSlave.addPoint(z_new);
 
                     imageView.setImageBitmap(clickSlave.drawPermLine(
                             clickSlave.points[clickSlave.points_picked-2],
-                            clickSlave.points[clickSlave.points_picked-1],
-                            Color.BLACK)
+                            clickSlave.points[clickSlave.points_picked-1])
                     );
 
                     if (clickSlave.allPointsChosen()) {
