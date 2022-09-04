@@ -101,7 +101,7 @@ public class ClickSlave {
 
     public Bitmap transform() {
         MobiusTransformation mt = new MobiusTransformation(
-                points[0], points[1], points[2], points[3], points[4], points[5]);
+                points[0], points[2], points[4], points[1], points[3], points[5]);  // z1, z2, z3, w1, w2, w3
         this.done = true;
         return transformBitmap(this.original, mt);
     }
