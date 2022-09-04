@@ -8,4 +8,5 @@
     <string name="str_about_title">About</string>
     <string name="str_about_text">This application was created by using tools from complex analysis.\n\nPlease get in touch with me on\ngabriel.shaahl@gmail.com\nif you have any feedback or suggestions.</string>
     <string name="str_saveImage">Save image</string>
+    <string name="desc_ImageView">The image you just took or uploaded</string>
 </resources>

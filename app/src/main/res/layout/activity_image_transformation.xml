@@ -15,7 +15,6 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="?homeAsUpIndicator"
         app:menu="@menu/action_bar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -27,6 +26,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_child_toolbar"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        android:contentDescription="@string/desc_ImageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

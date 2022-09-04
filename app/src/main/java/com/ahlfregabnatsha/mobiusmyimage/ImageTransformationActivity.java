@@ -1,5 +1,6 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -38,9 +39,16 @@ public class ImageTransformationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_transformation);
 
-        Toolbar myChildToolbar =
-                findViewById(R.id.my_child_toolbar);
+        Toolbar myChildToolbar = (Toolbar) findViewById(R.id.my_child_toolbar);
         setSupportActionBar(myChildToolbar);
+
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        assert ab != null;
+        ab.setDisplayHomeAsUpEnabled(true);
+
 
         //Info dialog
         dialog = new Dialog(this);
@@ -71,7 +79,7 @@ public class ImageTransformationActivity extends AppCompatActivity {
             }
 
             boolean outside = (event.getX() < 0 || event.getX() > bitmap.getWidth()
-                    || event.getY() < 0 ||event.getY() > bitmap.getHeight());
+                            || event.getY() < 0 || event.getY() > bitmap.getHeight());
 
             int action = event.getAction();
             ComplexNumber z_new;
@@ -159,10 +167,11 @@ public class ImageTransformationActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean onOptionsItemSelected(MenuItem item, Dialog dialog) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_showInfo:
                 // User chose the "Settings" item, show the app settings UI...
+                Toast.makeText(this, "Clicked info button", Toast.LENGTH_SHORT).show();
                 openInfoDialog(dialog);
                 return true;
 
