@@ -1,18 +1,26 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -24,8 +32,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Objects;
+import java.util.UUID;
 
 public class ImageTransformationActivity extends AppCompatActivity {
+
+    //Permissions
+    private static final int MY_WRITE_PERMISSION_CODE = 1;
 
     private ImageView imageView;
     public Bitmap bitmap;
@@ -221,12 +235,48 @@ public class ImageTransformationActivity extends AppCompatActivity {
                 openInfoDialog();
                 return true;
 
+            case R.id.action_saveImage:
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+                        ContextCompat.checkSelfPermission(ImageTransformationActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+
+                    // Requesting the permission
+                    ActivityCompat.requestPermissions(ImageTransformationActivity.this,
+                            new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, MY_WRITE_PERMISSION_CODE);
+                }
+                //error here!
+
+                else if (savePhotoToExternalStorage(UUID.randomUUID().toString(), this.bitmap)){
+                    //Permission already granted and we just saved
+                    Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
+                }
+
+                else {
+                    Toast.makeText(this, "Permission not granted", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == MY_WRITE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Toast.makeText(ImageTransformationActivity.this, "Write Permission Granted", Toast.LENGTH_SHORT) .show();
+            }
+            else {
+                Toast.makeText(ImageTransformationActivity.this, "Write Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     private void openInfoDialog() {
@@ -241,5 +291,38 @@ public class ImageTransformationActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+    //Saving bitmap
+    private boolean savePhotoToExternalStorage(String displayName, Bitmap bitmap) {
+        Uri imageCollection = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        }
+        else {
+            imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
+
+        ContentResolver resolver = getContentResolver();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, displayName + ".jpg");
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        contentValues.put(MediaStore.Images.Media.WIDTH, bitmap.getWidth());
+        contentValues.put(MediaStore.Images.Media.HEIGHT, bitmap.getHeight());
+
+        try {
+            //assert non null maybe
+            Uri imageUri = resolver.insert(imageCollection, contentValues);
+            OutputStream outputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            Objects.requireNonNull(outputStream);
+            return true;
+        }
+        catch (IOException e) {
+            Toast.makeText(this, "Image save failed" + e, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return false;
     }
 }
