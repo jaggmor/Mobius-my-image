@@ -14,12 +14,6 @@ Images of the UI of the app can be found below:
      height="auto"
      ></img>
 
-
-## To do list
-- Create arrows indicating how the transformation is transformed, from point to point.
-- Fix any remaining bugs and test the app for bugs 
-
-
 ## Known bugs
 
 - Whenever an image isn't selected or the app is rotated the current image is deleted and the previous image is shown. This could have unintended consequences for the user.
