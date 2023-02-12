@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mobius my image</string>
+    <string name="app_name">Mobius filter</string>
     <string name="str_txt_camera">Take a photo</string>
     <string name="str_txt_folder">Upload a photo</string>
     <string name="str_showInfo">Show info</string>
@@ -7,6 +7,12 @@
     <string name="str_instruction_text">1. Upload or take a photo.\n2. Click on the image to begin transforming.\n3. Save the transformed image to your gallery.</string>
     <string name="str_about_title">About</string>
     <string name="str_about_text">This application was created by using tools from complex analysis.\n\nPlease get in touch with me on\ngabriel.shaahl@gmail.com\nif you have any feedback or suggestions.</string>
-    <string name="str_saveImage">Save image</string>
+    <string name="str_saveImage">Save</string>
     <string name="desc_ImageView">The image you just took or uploaded</string>
+    <string name="str_undo">Undo</string>
+    <string name="str_reverse">Restore</string>
+    <string name="upload_an_image_to_transform">Upload an image to transform</string>
+    <string name="take_a_picture_to_transform">Take a picture to transform.</string>
+    <string name="version_bottom_text">Version 1.0 2023</string>
+    <string name="ok">OK</string>
 </resources>
