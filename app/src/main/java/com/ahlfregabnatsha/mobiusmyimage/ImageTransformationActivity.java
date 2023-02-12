@@ -166,15 +166,7 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
                         TransformRunnable transformRunnable = new TransformRunnable(clickSlave);
                         new Thread(transformRunnable).start();
-                        /*
-                        //this.bitmap = clickSlave.transform();
-                        //imageView.setImageBitmap(this.bitmap);
-                        spinner.setVisibility(View.GONE);
 
-                        my_menu.findItem(R.id.action_saveImage).setVisible(true);
-                        my_menu.findItem(R.id.action_reverse).setVisible(true);
-                        my_menu.findItem(R.id.action_undo).setVisible(false);
-                    */
                     }
                     break;
                 default:
@@ -185,7 +177,6 @@ public class ImageTransformationActivity extends AppCompatActivity {
         });
     }
 
-    //https://stackoverflow.com/questions/4837715/how-to-resize-a-bitmap-in-android
     //Rescale to functional size for transformation.
     public Bitmap resizeToScreenWidth(Bitmap bitmap) {
         int width = bitmap.getWidth();
@@ -350,17 +341,15 @@ public class ImageTransformationActivity extends AppCompatActivity {
         @Override
         public void run() {
             Bitmap runnableBitmap = clickSlave.transform();
-            mainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    imageView.setImageBitmap(runnableBitmap);
-                    spinner.setVisibility(View.GONE);
+            mainHandler.post(() -> {
+                imageView.setImageBitmap(runnableBitmap);
+                spinner.setVisibility(View.GONE);
 
-                    my_menu.findItem(R.id.action_saveImage).setVisible(true);
-                    my_menu.findItem(R.id.action_reverse).setVisible(true);
-                    my_menu.findItem(R.id.action_undo).setVisible(false);
-                }
+                my_menu.findItem(R.id.action_saveImage).setVisible(true);
+                my_menu.findItem(R.id.action_reverse).setVisible(true);
+                my_menu.findItem(R.id.action_undo).setVisible(false);
             });
         }
     }
+
 }

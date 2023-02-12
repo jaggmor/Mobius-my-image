@@ -67,13 +67,12 @@ public class MainActivity extends AppCompatActivity {
 
         //Requires pathing in the file provider
         activityResultLauncherPhoto = registerForActivityResult(new ActivityResultContracts.TakePicture(),
-                result -> beginImageTransformation(uri));
+                result -> {
+                if (result) beginImageTransformation(uri);
+                });
 
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
-                uri1 -> {
-                    Toast.makeText(MainActivity.this, uri1.getPath(), Toast.LENGTH_SHORT) .show();
-                    beginImageTransformation(uri1);
-                });
+                this::beginImageTransformation);
 
         camera.setOnClickListener(v -> {
             //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
