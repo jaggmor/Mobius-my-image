@@ -222,6 +222,7 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
         bitmap.recycle();
         return resizedBitmap;
+
     }
 
     public static int getScreenWidth() {

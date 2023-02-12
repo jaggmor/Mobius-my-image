@@ -2,12 +2,15 @@ package com.ahlfregabnatsha.mobiusmyimage;
 
 import static java.lang.Math.atan2;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 
 public class ClickSlave {
@@ -18,6 +21,9 @@ public class ClickSlave {
 
     int bitmapWidth;
     int bitmapHeight;
+    float arrowWidth;
+    float arrowHeight;
+    float strokeWidth;
 
     public ComplexNumber z_new = new ComplexNumber(0,0);
 
@@ -32,10 +38,17 @@ public class ClickSlave {
         // When object is created we save the old bitmap.
         this.original = bitmap;
         this.copy = bitmap.copy(bitmap.getConfig(), true);
-        //this.canvas = new Canvas(bitmap);
 
         this.bitmapWidth = bitmap.getWidth();
         this.bitmapHeight = bitmap.getHeight();
+
+        // Create some dimensions for drawing the arrows.
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        // Use formula: px = dp * (dpi / 160)
+
+        this.arrowWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, metrics);
+        this.arrowHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, metrics);
+        this.strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, metrics);
     }
 
     public Bitmap getPrevious() {
@@ -78,7 +91,7 @@ public class ClickSlave {
         Paint paint = new Paint();
         paint.setColor(color);
         paint.setAntiAlias(true);
-        paint.setStrokeWidth(18f);
+        paint.setStrokeWidth(this.strokeWidth);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
 
@@ -98,8 +111,10 @@ public class ClickSlave {
 
         // Draw arrowhead pointing in the (1, 0) direction.
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        float w = 80f;
-        float h = 100f;
+
+
+        float w = this.arrowWidth;
+        float h = this.arrowHeight;
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
         path.moveTo(0, 0);
