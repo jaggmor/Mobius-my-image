@@ -8,12 +8,12 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.widget.Toast;
 
 
 public class ClickSlave {
     Bitmap original;
     Bitmap copy;
+    Bitmap previous;
     //private Canvas canvas;
 
     int bitmapWidth;
@@ -38,9 +38,31 @@ public class ClickSlave {
         this.bitmapHeight = bitmap.getHeight();
     }
 
+    public Bitmap getPrevious() {
+        this.copy = previous.copy(previous.getConfig(), true);
+        return this.copy;
+    }
+
+    public boolean undo() {
+        points[points_picked-1] = null;
+        points[points_picked-2] = null;
+        points_picked = points_picked - 2;
+        if (points_picked == 2) {
+            this.previous = this.original;
+            return true;  // We can undo again
+        }
+        return false;  // We can't undo again.
+    }
+
     public Bitmap drawPermLine(ComplexNumber z1, ComplexNumber z2) {
         int color = colors[(points_picked)/2 - 1];  // A pair of points was just chosen.
         this.z_new = z2;
+        if (points_picked == 2) {
+            previous = this.original;
+        }
+        else {
+            previous = copy.copy(copy.getConfig(), true);
+        }
         return drawLine(this.copy, z1, z2, color);
     }
 
