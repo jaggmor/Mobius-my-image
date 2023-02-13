@@ -32,7 +32,8 @@ Required Features
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".ImageTransformationActivity"
+        <activity
+            android:name=".ImageTransformationActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait">
             <!-- Parent activity meta-data to support 4.0 and lower -->
@@ -41,7 +42,10 @@ Required Features
                 android:value="com.ahlfregabnatsha.mobiusmyimage.MainActivity" />
         </activity>
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
