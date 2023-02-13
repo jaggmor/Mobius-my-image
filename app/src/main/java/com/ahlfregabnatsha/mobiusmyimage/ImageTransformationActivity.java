@@ -1,5 +1,6 @@
 package com.ahlfregabnatsha.mobiusmyimage;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -44,7 +45,7 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
     private static final String TAG_IMAGE = "ImageActivity";
 
-    private static final int MY_WRITE_PERMISSION_CODE = 1;
+    private static final int MY_WRITE_PERMISSION_CODE = 98;
 
     private ImageView imageView;
     private ProgressBar spinner;
@@ -333,7 +334,6 @@ public class ImageTransformationActivity extends AppCompatActivity {
 
     class TransformRunnable implements Runnable {
         ClickSlave clickSlave;
-
         TransformRunnable(ClickSlave clickSlave) {
             this.clickSlave = clickSlave;
         }
@@ -348,7 +348,34 @@ public class ImageTransformationActivity extends AppCompatActivity {
                 my_menu.findItem(R.id.action_saveImage).setVisible(true);
                 my_menu.findItem(R.id.action_reverse).setVisible(true);
                 my_menu.findItem(R.id.action_undo).setVisible(false);
+
+                bitmap = runnableBitmap;
             });
+        }
+    }
+
+    // This function is called when the user accepts or decline the permission.
+    // Request Code is used to check which permission called this function.
+    // This request code is provided when the user is prompt for permission.
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode,
+                permissions,
+                grantResults);
+
+        if (requestCode == MY_WRITE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(ImageTransformationActivity.this, "Write Permission Granted", Toast.LENGTH_SHORT) .show();
+            }
+            else {
+                Toast.makeText(ImageTransformationActivity.this, "Write Permission Denied", Toast.LENGTH_SHORT) .show();
+            }
+        }
+        else {
+            Toast.makeText(ImageTransformationActivity.this, "Undefined permission", Toast.LENGTH_SHORT) .show();
         }
     }
 
