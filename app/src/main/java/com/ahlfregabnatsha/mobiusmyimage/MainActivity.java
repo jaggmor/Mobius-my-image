@@ -72,8 +72,15 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                returned_uri -> {
+                    if (returned_uri != null) {
+                        beginImageTransformation(returned_uri);
+                    }
+                });
+        /*
+        mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 this::beginImageTransformation);
-
+*/
         camera.setOnClickListener(v -> {
             //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (ContextCompat.checkSelfPermission(MainActivity.this,
